@@ -1,36 +1,12 @@
 import asyncio
-from crawl4ai import AsyncWebCrawler, CrawlerRunConfig, CacheMode ,JsonCssExtractionStrategy
+from crawl4ai import AsyncWebCrawler, CrawlerRunConfig, CacheMode
 import time
-schema = {
-  "baseSelector": "body",
-  "fields": [
-    {
-      "name": "headlines",
-      "selector": "h1, h2, h3",
-      "type": "text"
-    },
-    {
-      "name": "paragraphs",
-      "selector": "p",
-      "type": "text"
-    },
-    {
-      "name": "article_blocks",
-      "selector": "article, .article-body, .content, [role='main']",
-      "type": "text"
-    }
-  ]
-}
-
-
 async def scraper(urls):
 
-    strategy = JsonCssExtractionStrategy(schema)
     run_conf = CrawlerRunConfig(
         cache_mode=CacheMode.BYPASS,
         stream=True  ,# Enable streaming mode
-        page_timeout=3*1000,
-        extraction_strategy=strategy
+        page_timeout=10*1000,
     )
 
     async with AsyncWebCrawler() as crawler:
@@ -48,7 +24,7 @@ async def scraper(urls):
         for res in results:
             if res.success:
                 print(f"[OK] {res.url}, length: {len(res.markdown.raw_markdown)}")
-                out = res.extracted_content
+                out = res.markdown.raw_markdown
                 print(type(out))
                 output.append(out)
             else:

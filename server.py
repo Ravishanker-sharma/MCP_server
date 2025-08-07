@@ -4,7 +4,6 @@ import datetime
 from mcp.server.fastmcp import FastMCP
 from genralscraper import get_data
 from fastscraper import scraper
-from yahoosearchengine import yahoo_search
 from googlecal import calendar_details, list_events, create_event ,Event
 
 mcp = FastMCP("SearchEngine")
@@ -16,7 +15,19 @@ async def search(query: str) -> Any:
     :param query: string
     :return: any
     """
-    return await scraper(yahoo_search(query))
+    return await get_data(query)
+
+@mcp.tool()
+async def scrape(url: list) -> Any:
+    """
+    This function can be used to scrape a list of urls.
+    :param url: list
+    :return: any
+    """
+    try:
+        return await scraper(url)
+    except Exception as e:
+        return f"Error occurred: {e}"
 
 @mcp.tool()
 async def get_current_time() -> str:
